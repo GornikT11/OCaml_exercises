@@ -101,11 +101,14 @@ let rec strongest_wizard (wizards : wizard list) : wizard option =
    that is used for taking the maximum between two elements.
 *)
 
+let rec max_list (xs : 'a List) (max: 'a -> 'a -> 'a) : 'a option =
+   
 
 
 (* Races have either high, normal, or low vulnerability to each school of
    magic. Represent these possibilities as a variant type. *)
 
+   type vulnerability = Normal | High | Low
 
 (* Write a function that computes the following vulnerabilities:
    Low vulnerability for orcs:necrotic, hobbits:fire, humans:angelic,
