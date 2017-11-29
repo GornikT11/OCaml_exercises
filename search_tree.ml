@@ -28,8 +28,13 @@ let test_tree = Node( Node(leaf 0, 2, Empty), 5, Node(leaf 6, 7, leaf 11))
    Node (Node (Node (Empty, 11, Empty), 7, Node (Empty, 6, Empty)), 5,
    Node (Empty, 2, Node (Empty, 0, Empty)))
    ---------- *)
+   
 
-let rec mirror t = ()
+let rec mirror t =
+  match t with
+  | Empty -> Empty
+  | Node(l, x, r) -> Node((mirror r), x, (mirror l)) 
+  
 
 (* The function "height t" returns the height (or depth) of the tree and
    the function "size t" returns the number of all tree nodes.
@@ -40,9 +45,15 @@ let rec mirror t = ()
    - : int = 6
    ---------- *)
 
-let rec height t = ()
+let rec height t =
+  match t with
+  | Empty -> 0
+  | Node(l, x, r) -> 1 + max (height l) (height r)
 
-let rec size t = ()
+let rec size t =
+  match t with
+  | Empty -> 0
+  | Node(l, x, r) -> 1 + (size l) + (size r)
 
 (* The function "follow directions t" [direction list -> 'a tree -> 'a option]
    takes as input a list of directions for traversing the tree. Because the
@@ -56,7 +67,20 @@ let rec size t = ()
 
 type direction = Left | Right
 
-let rec follow directions t = ()
+let rec follow1 dirs t =
+  match (dirs, t) with
+  | (_, Empty) -> None
+  | (Left::direcs, Node(l, _, _)) -> follow1 direcs l
+  | (Right::direcs, Node(_, _, r)) -> follow1 direcs r
+  | ([], Node(_, x, _)) -> Some x
+
+(*let rec follow directions t =
+  match t with
+  | Empty -> None
+  | Node(l, x, r) ->
+    match directions with  
+      | [] -> x
+*)
 
 (* The function "prune directions t" [direction list -> 'a tree -> 'a tree option]
    finds the node determined by the directions and deltes the subtree rooted
@@ -69,7 +93,16 @@ let rec follow directions t = ()
    Some (Node (Node (Node (Empty, 0, Empty), 2, Empty), 5, Empty))
    ---------- *)
 
-let rec prune directions t = ()
+let rec prune directions t =
+  match (directions, t) with
+  | (_::_, Empty) -> None
+  | ([], _) -> Some Empty
+  | (Left::dirs, Node(l, x, r)) -> let lefttree = prune dirs l in 
+  if lefttree = None then None 
+  else Some Node(lefttree, x, r)
+  | (Right::dirs, Node(l, x, r)) -> let righttree = prune dirs r in 
+  if righttree = None then None
+  else Some Node(l, x, righttree)
 
 (* The function "map_tree f t"  [('a -> 'b) -> 'a tree -> 'b tree] maps the
    nodes of the tree t with the function f.
