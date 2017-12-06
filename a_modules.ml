@@ -48,12 +48,14 @@
  operations and conversion functions from and to OCaml's "int" type. *)
 module type NAT = sig
     type t
-    val eq   : t -> t -> bool
-    val zero : t
-	val one : t
-	val plus : t -> t -> t
-	val minus : t -> t -> t
-	val multiplication : t -> t -> t
+    val eq         : t -> t -> bool
+    val zero       : t
+	val one        : t
+	val plus       : t -> t -> t
+	val minus      : t -> t -> t
+	val multipl    : t -> t -> t
+	val nat_to_int : t -> int
+	val int_to_nat : int -> t
     (* add what's missing here! *)
   end
 
@@ -63,13 +65,19 @@ module type NAT = sig
    Trick : until you're done implementing Nat_int, it won't have the required
    signature. You can add stubs with `failwith "later"' to make the compiler
    happy and leave a note for yourself. *)
-(*
+
 module Nat_int : NAT = struct
-  type t =
-  let eq =
-  ...
+  type t = int  
+  let eq = (=)
+  let zero = 0
+  let one = 1
+  let plus = (+)
+  let minus = (-)
+  let multipl = ( * )
+  let nat_to_int t = t 
+  let int_to_nat t = max 0 t  
 end
- *)
+
 
 (* Write another implementation of NAT, taking inspiration from the Peano
  axioms: https://en.wikipedia.org/wiki/Peano_axioms
@@ -80,14 +88,26 @@ end
  - All the other functions are also defined by structural recursion (c.f.
    Wikipedia).
  *)
-(*
-module ... = struct
 
-  type t = ...
-  let rec eq x y = ..
+module NP : NAT = struct
 
+  type t = Z | S of t
+  let zero = Z 
+  let one = S Z
+  let rec eq x y = 
+  match (x, y) with
+    | (Z, Z) -> true
+    | (Z, S t) -> false
+	| (S t, Z) -> false
+    | (S x, S y) -> eq x y 	
+  let rec plus x y =
+  match (x, y) with
+    | (Z, x) | (x, Z)-> x
+	| (S x, y) -> S (plus x y)
+  let rec minus x y =
+  match (x, y) with
+    |
 end
- *)
 
 
 (* For those wishing to reenact the glory of 17th century mathematics:
