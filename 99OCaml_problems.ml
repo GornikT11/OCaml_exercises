@@ -136,7 +136,80 @@ let rec replicate l n =
   match l with
   | [] -> []
   | x::xs -> (repl [] x n)@(replicate xs n)
+  
+(* 31. Determine whether a given integer number is prime. *)
 
+let is_prime n =
+  let n = abs n in
+    let rec not_divisor d =
+	  (d * d > n) || (n mod d <> 0 && not_divisor (d+1))
+	in n <> 1 && not_divisor 2
+	
+
+(*32. Determine the greatest common divisor of two positive integer numbers.*)
+
+let rec gcd n m =
+  let k = (max n m) mod (min n m) in
+  if k = 0 then m else gcd (min n m) k
+  
+(*33. Determine whether two positive integer numbers are coprime*)
+
+let coprime n m = (gcd n m) = 1
+
+(*34. Calculate Euler's totient function φ(m).*)
+
+let phi n = 
+  let rec fi acc d =
+  if d = n then acc else
+  if (coprime n d) then fi (acc+1) (d+1) else
+  fi acc (d+1) in
+  fi 0 1  
+  
+  
+(*35. Determine the prime factors of a given positive integer.*)
+
+let factors n =
+  let rec razstavi acc d n =
+    if n < 2 then [] else
+    if d = n then (rev (n::acc))else
+	if is_prime d && n mod d = 0 then razstavi (d::acc) d (n/d)
+	else razstavi acc (d+1) n in
+  razstavi [] 2 n
+  
+(*36. Determine the prime factors of a given positive integer (2).*)
+
+let factors1 n =
+  let rec razstavi acc d n =
+  if n = 1 then rev acc else
+    let rec potenca p k n = if n mod k = 0 then potenca (p+1) k (n/k) else p in
+  if is_prime d && n mod d = 0 then 
+  razstavi 
+  ((d, potenca 0 d n)::acc)
+  (d+1) 
+  (n/(int_of_float(float_of_int d ** float_of_int (potenca 0 d n))))
+  else razstavi acc (d+1) n in
+  razstavi [] 2 n
+  
+(*37. Calculate Euler's totient function φ(m) (improved).*)
+
+let phi_improved n = 
+  let faktorji = factors n in
+  let rec fi faktorji =
+  match faktorji with
+    | [] -> 1
+    | [x] -> x - 1
+	| x::(y::xs as t) -> if x = y then x * fi t else (x-1) * fi t
+  in fi faktorji
+  
+(*38. Compare the two methods of calculating Euler's totient function.*)
+
+(* 
+let timeit f a =
+    let t0 = Unix.gettimeofday() in
+    ignore(f a);
+    let t1 = Unix.gettimeofday() in
+    t1 -. t0;;
+*)
 
 
 
